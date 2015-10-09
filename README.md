@@ -1,4 +1,4 @@
-### PySDL2 asteroids
+### Pygame asteroids
 
 This repo contains a set of steps to go from 0 to asteroids in simple steps.
 
@@ -10,9 +10,3 @@ This repo contains a set of steps to go from 0 to asteroids in simple steps.
 - Bullets
 - Scoring and Text
 - Resizing the screen.
-
-
-```
-brew install sdl2 sdl2_image sdl2_ttf
-pip install pysdl2
-```
