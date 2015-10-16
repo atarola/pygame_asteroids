@@ -43,11 +43,13 @@ If there is no output, you're good to go.
 
 ## Step 1: Window and main loop.
 
-Windows, surfaces, events, and clocks. Resizing the screen.
+### Pygame Init
 
-## Step 2: Add a player to the screen.
+### Windows and Surfaces
 
-Pygame sprite groups and sprites.
+### Events and an Event Loop
+
+### Sprites & Sprite Groups
 
 ## Step 3: Getting the player to move.
 
@@ -55,4 +57,4 @@ Newtonian Physics and vectors!
 
 ## Step 4: Asteroids and Bullets
 
-Sprites, Collision Detection, and such.
+Collision Detection
