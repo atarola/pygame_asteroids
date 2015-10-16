@@ -4,8 +4,8 @@ import pygame
 from pygame.locals import *
 
 
-class Window(object):
-    """ stash away our window """
+class World(object):
+    """ world options """
 
     RENDER_OPTIONS = HWSURFACE | DOUBLEBUF | RESIZABLE
     BLACK = (0, 0, 0)
@@ -29,9 +29,7 @@ def main():
     pygame.display.set_caption("Asteroids 0.1")
 
     # store our game state
-    world = {
-        "window": Window()
-    }
+    world = World((800, 600))
 
     # use the clock to throttle the fps to something reasonable
     clock = pygame.time.Clock()
@@ -41,13 +39,14 @@ def main():
     while running:
         events = pygame.event.get()
 
+        # handle our events
         for event in events:
             if event.type == QUIT:
                 running = False
                 break
 
             if event.type == VIDEORESIZE:
-                world['window'].set_size(event.dict['size'])
+                world.set_size(event.dict['size'])
 
         pygame.display.flip()
         clock.tick(40)
