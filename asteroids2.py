@@ -198,7 +198,7 @@ def main():
     # setup pygame
     pygame.init()
     pygame.font.init()
-    pygame.display.set_caption("Asteroids 0.1")
+    pygame.display.set_caption("Asteroids 0.2")
 
     # store our game state
     player = Player((400, 300))
