@@ -53,8 +53,26 @@ If there is no output, you're good to go.
 
 ## Step 3: Getting the player to move.
 
-Newtonian Physics and vectors!
+### Quick Vector Introduction
+
+### Cleanup Event Handling
+
+### Player Facings
+
+### Moving the Sprites
 
 ## Step 4: Asteroids and Bullets
 
-Collision Detection
+### Adding Asteroids
+
+### Adding Bullets
+
+### Collision Detection
+
+## Step 5: Scene Management
+
+### Creating a Scene System
+
+### Adding a New Game Scene
+
+### Adding a Game Over Scene

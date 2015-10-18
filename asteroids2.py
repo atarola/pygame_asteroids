@@ -19,12 +19,34 @@ class World(object):
         self.surface = pygame.display.set_mode(size, self.RENDER_OPTIONS)
         self.surface.fill(self.BLACK)
 
+        # stash the player sprite
+        self.player = player
+
         # adding a sprite group
         self.sprites = pygame.sprite.RenderUpdates()
         self.sprites.add(player)
 
+        # setup our event handlers
+        self.event_handlers = {
+            VIDEORESIZE: self.handle_resize,
+            KEYDOWN: self.handle_keydown,
+            KEYUP: self.handle_keyup
+        }
+
     def update(self):
+        # allow any sprites to update themselves
         self.sprites.update()
+
+        # change the sprite's location to match it's proper motion
+        for sprite in self.sprites:
+            # grab the next position the sprite should be at
+            new_center = Vector.from_position(sprite.rect.center) + sprite.motion
+            new_center = new_center.to_position()
+
+            # do the screen wrap for the x and y positions
+            x = new_center[0] % self.size[0]
+            y = new_center[1] % self.size[1]
+            sprite.rect.center = (x, y)
 
     def render(self):
         """ render the sprites to the window """
@@ -35,10 +57,32 @@ class World(object):
         updatedRects = self.sprites.draw(self.surface)
         pygame.display.update(updatedRects)
 
-    def set_size(self, new_size):
+    def handle_event(self, event):
+        handler = self.event_handlers.get(event.type, lambda x: None)
+        handler(event)
+
+    def handle_resize(self, event):
         """ set the window size """
-        self.size = new_size
-        self.surface = pygame.display.set_mode(new_size, self.RENDER_OPTIONS)
+        self.size = event.dict['size']
+        self.surface = pygame.display.set_mode(self.size, self.RENDER_OPTIONS)
+
+    def handle_keydown(self, event):
+        if event.key == K_UP:
+            self.player.forward = True
+
+        if event.key == K_DOWN:
+            self.player.backward = True
+
+    def handle_keyup(self, event):
+        if event.key in (K_UP, K_DOWN):
+            self.player.forward = False
+            self.player.backward = False
+
+        if event.key == K_LEFT:
+            self.player.turn_left()
+
+        if event.key == K_RIGHT:
+            self.player.turn_right()
 
 
 class Vector(object):
@@ -102,20 +146,22 @@ class Vector(object):
         return Vector.from_radians(math.radians(degrees), magnatude)
 
 
-class Player(pygame.sprite.Sprite):
+class Entity(pygame.sprite.Sprite):
+
+    def __init__(self, image, position):
+        super(Entity, self).__init__()
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.center = position
+        self.motion = Vector(0, 0)
+
+
+class Player(Entity):
     """ represents the player """
 
     def __init__(self, position):
-        super(Player, self).__init__()
         self.orig_image = pygame.image.load('assets/ship.png')
-
-        # setup pygames rendering
-        self.image = self.orig_image
-        self.rect = self.image.get_rect()
-        self.rect.center = position
-
-        # handle our motion
-        self.motion = Vector(0, 0)
+        super(Player, self).__init__(self.orig_image, position)
         self.facing = Vector.from_degrees(90)
         self.forward = False
         self.backward = False
@@ -128,14 +174,12 @@ class Player(pygame.sprite.Sprite):
         if self.backward:
             self.motion = self.motion + self.facing
 
-        # modify the ships position by it's motion
-        current = Vector.from_position(self.rect.center) + self.motion
-
         # rotate our sprite to match our direction, and put it in the right place
+        current = self.rect.center
         degrees, _ = self.facing.to_degrees()
         self.image = pygame.transform.rotate(self.orig_image, degrees)
         self.rect = self.image.get_rect()
-        self.rect.center = current.to_position()
+        self.rect.center = current
 
     def turn_left(self):
         degrees, _ = self.facing.to_degrees()
@@ -174,25 +218,7 @@ def main():
                 running = False
                 break
 
-            if event.type == VIDEORESIZE:
-                world.set_size(event.dict['size'])
-
-            if (event.type == KEYDOWN) and (event.key == K_UP):
-                player.forward = True
-
-            if (event.type == KEYDOWN) and (event.key == K_DOWN):
-                player.backward = True
-
-            if event.type == KEYUP:
-                if event.key in (K_UP, K_DOWN):
-                    player.forward = False
-                    player.backward = False
-
-                if event.key == K_LEFT:
-                    player.turn_left()
-
-                if event.key == K_RIGHT:
-                    player.turn_right()
+            world.handle_event(event)
 
         world.update()
         world.render()
