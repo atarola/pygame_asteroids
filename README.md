@@ -51,7 +51,7 @@ If there is no output, you're good to go.
 
 ### Sprites & Sprite Groups
 
-## Step 3: Getting the player to move.
+## Step 2: Getting the player to move.
 
 ### Quick Vector Introduction
 
@@ -61,15 +61,15 @@ If there is no output, you're good to go.
 
 ### Moving the Sprites
 
-## Step 4: Asteroids and Bullets
-
-### Adding Asteroids
+## Step 3: Asteroids and Bullets
 
 ### Adding Bullets
 
+### Adding Asteroids
+
 ### Collision Detection
 
-## Step 5: Scene Management
+## Step 4: Scene Management
 
 ### Creating a Scene System
 
