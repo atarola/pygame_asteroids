@@ -73,26 +73,33 @@ class World(object):
         if event.key == K_DOWN:
             self.player.backward = True
 
+        if event.key == K_LEFT:
+            self.player.turn_left = True
+
+        if event.key == K_RIGHT:
+            self.player.turn_right = True
+
     def handle_keyup(self, event):
-        if event.key in (K_UP, K_DOWN):
+        if event.key == K_UP:
             self.player.forward = False
+
+        if event.key ==  K_DOWN:
             self.player.backward = False
 
         if event.key == K_LEFT:
-            self.player.turn_left()
+            self.player.turn_left = False
 
         if event.key == K_RIGHT:
-            self.player.turn_right()
+            self.player.turn_right = False
 
-        if event.key == K_x:
+        if event.key == K_SPACE:
             vector_sum = self.player.facing + self.player.motion
             direction, magnitude = vector_sum.to_degrees()
-            
+
             self.sprites.add(Bullet(self.player.rect.center,
                                     direction,
                                     magnitude + 10))
 
-        
 
 class Vector(object):
 
@@ -174,31 +181,32 @@ class Player(Entity):
         self.facing = Vector.from_degrees(90)
         self.forward = False
         self.backward = False
+        self.turn_left = False
+        self.turn_right = False
+        self.accel = 0.15
 
     def update(self):
         # if we are thrusting, add the vector of our facing to the motion
         if self.forward:
-            self.motion = self.motion - self.facing
+            self.motion = self.motion - self.facing * self.accel
 
         if self.backward:
-            self.motion = self.motion + self.facing
+            self.motion = self.motion + self.facing * self.accel
+
+        degrees, _ = self.facing.to_degrees()
+        if self.turn_left:
+            degrees = (degrees + 10) % 360
+
+        if self.turn_right:
+            degrees = (degrees + 10) % 360
+
+        self.facing = Vector.from_degrees(degrees)
 
         # rotate our sprite to match our direction, and put it in the right place
         current = self.rect.center
-        degrees, _ = self.facing.to_degrees()
         self.image = pygame.transform.rotate(self.orig_image, degrees)
         self.rect = self.image.get_rect()
         self.rect.center = current
-
-    def turn_left(self):
-        degrees, _ = self.facing.to_degrees()
-        degrees = (degrees + 10) % 360
-        self.facing = Vector.from_degrees(degrees)
-
-    def turn_right(self):
-        degrees, _ = self.facing.to_degrees()
-        degrees = (degrees - 10) % 360
-        self.facing = Vector.from_degrees(degrees)
 
 
 class Bullet(Entity):
@@ -215,7 +223,7 @@ class Bullet(Entity):
         if self.duration <= 0:
             self.kill()
 
-    
+
 def main():
     """ runs our application """
 
