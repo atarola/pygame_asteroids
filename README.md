@@ -25,7 +25,6 @@ First, install Homebrew and XQuartz:
 
 - Ensure you have installed Xcode and it is up to date
 - Homebrew: http://brew.sh/
-  - After installation run `brew update`
 - XQuartz: http://xquartz.macosforge.org/landing
 
 Now, In a terminal, run this:
@@ -35,6 +34,7 @@ Now, In a terminal, run this:
     export LDFLAGS='-arch i386 -arch x86_64'
     export ARCHFLAGS='-arch i386 -arch x86_64'
 
+    brew update
     brew install mercurial sdl sdl_image sdl_mixer sdl_ttf smpeg portmidi
     pip install hg+http://bitbucket.org/pygame/pygame
 
