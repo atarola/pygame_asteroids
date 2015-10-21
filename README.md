@@ -12,7 +12,8 @@ This repo contains a set of steps to go from 0 to asteroids in simple steps.
 
 ### Windows
 
-Download the package from: http://www.pygame.org/download.shtml
+Ensure you have the NON-64 bit version of python
+Download the package from: http://www.pygame.org/download.shtml for the version of python that you have
 
 ### Linux
 
@@ -22,7 +23,9 @@ Fetch from your package manager
 
 First, install Homebrew and XQuartz:
 
+- Ensure you have installed Xcode and it is up to date
 - Homebrew: http://brew.sh/
+  - After installation run `brew update`
 - XQuartz: http://xquartz.macosforge.org/landing
 
 Now, In a terminal, run this:
