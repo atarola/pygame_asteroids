@@ -84,6 +84,15 @@ class World(object):
         if event.key == K_RIGHT:
             self.player.turn_right()
 
+        if event.key == K_x:
+            vector_sum = self.player.facing + self.player.motion
+            direction, magnitude = vector_sum.to_degrees()
+            
+            self.sprites.add(Bullet(self.player.rect.center,
+                                    direction,
+                                    magnitude + 10))
+
+        
 
 class Vector(object):
 
@@ -192,6 +201,21 @@ class Player(Entity):
         self.facing = Vector.from_degrees(degrees)
 
 
+class Bullet(Entity):
+    """ A bullet. Pew Pew. """
+
+    def __init__(self, position, direction, magnitude):
+        self.orig_image = pygame.image.load('assets/bullet.png')
+        super(Bullet, self).__init__(self.orig_image, position)
+        self.motion = Vector.from_degrees(direction, magnitude)
+        self.duration = 1000
+
+    def update(self):
+        self.duration = self.duration - 50
+        if self.duration <= 0:
+            self.kill()
+
+    
 def main():
     """ runs our application """
 
