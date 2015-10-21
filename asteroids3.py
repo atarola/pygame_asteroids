@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import math
-import random
 
 import pygame
 from pygame.locals import *
@@ -20,10 +19,8 @@ class World(object):
         self.surface = pygame.display.set_mode(size, self.RENDER_OPTIONS)
         self.surface.fill(self.BLACK)
 
-        # stash the sprites
+        # stash the player sprite
         self.player = player
-        self.bullets = []
-        self.asteroids = []
 
         # adding a sprite group
         self.sprites = pygame.sprite.RenderUpdates()
@@ -39,12 +36,6 @@ class World(object):
     def update(self):
         # allow any sprites to update themselves
         self.sprites.update()
-
-        # kill any bullets that have outlived their time
-        for bullet in self.bullets:
-            if bullet.ttl < 0:
-                self.sprites.remove(bullet)
-                self.bullets.remove(bullet)
 
         # change the sprite's location to match it's proper motion
         for sprite in self.sprites:
@@ -82,21 +73,32 @@ class World(object):
         if event.key == K_DOWN:
             self.player.backward = True
 
-    def handle_keyup(self, event):
-        if (event.key == K_SPACE) and (len(self.bullets) < 10):
-            bullet = Bullet(self.player.rect.center, self.player.motion, self.player.facing)
-            self.bullets.append(bullet)
-            self.sprites.add(bullet)
+        if event.key == K_LEFT:
+            self.player.turn_left = True
 
-        if event.key in (K_UP, K_DOWN):
+        if event.key == K_RIGHT:
+            self.player.turn_right = True
+
+    def handle_keyup(self, event):
+        if event.key == K_UP:
             self.player.forward = False
+
+        if event.key ==  K_DOWN:
             self.player.backward = False
 
         if event.key == K_LEFT:
-            self.player.turn_left()
+            self.player.turn_left = False
 
         if event.key == K_RIGHT:
-            self.player.turn_right()
+            self.player.turn_right = False
+
+        if event.key == K_SPACE:
+            vector_sum = self.player.facing + self.player.motion
+            direction, magnitude = vector_sum.to_degrees()
+
+            self.sprites.add(Bullet(self.player.rect.center,
+                                    direction,
+                                    magnitude + 10))
 
 
 class Vector(object):
@@ -170,29 +172,6 @@ class Entity(pygame.sprite.Sprite):
         self.motion = Vector(0, 0)
 
 
-class Bullet(Entity):
-
-    def __init__(self, position, motion, facing):
-        # setup the image properly
-        image = pygame.image.load('assets/pew.png')
-        degrees, _ = facing.to_degrees()
-        image = pygame.transform.rotate(image, degrees)
-        super(Bullet, self).__init__(image, position)
-        self.motion = motion - (facing * 5)
-        self.ttl = 80
-
-    def update(self):
-        self.ttl = self.ttl - 1
-
-
-class Asteroid(Entity):
-
-    def __init__(self, position):
-        image = pygame.image.load('assets/asteroid.png')
-        super(Asteroid, self).__init__(image, position)
-        self.motion = Vector.from_degrees(random.randint(360)) * 3
-
-
 class Player(Entity):
     """ represents the player """
 
@@ -202,31 +181,47 @@ class Player(Entity):
         self.facing = Vector.from_degrees(90)
         self.forward = False
         self.backward = False
+        self.turn_left = False
+        self.turn_right = False
+        self.accel = 0.15
 
     def update(self):
         # if we are thrusting, add the vector of our facing to the motion
         if self.forward:
-            self.motion = self.motion - self.facing
+            self.motion = self.motion - self.facing * self.accel
 
         if self.backward:
-            self.motion = self.motion + self.facing
+            self.motion = self.motion + self.facing * self.accel
+
+        degrees, _ = self.facing.to_degrees()
+        if self.turn_left:
+            degrees = (degrees + 10) % 360
+
+        if self.turn_right:
+            degrees = (degrees + 10) % 360
+
+        self.facing = Vector.from_degrees(degrees)
 
         # rotate our sprite to match our direction, and put it in the right place
         current = self.rect.center
-        degrees, _ = self.facing.to_degrees()
         self.image = pygame.transform.rotate(self.orig_image, degrees)
         self.rect = self.image.get_rect()
         self.rect.center = current
 
-    def turn_left(self):
-        degrees, _ = self.facing.to_degrees()
-        degrees = (degrees + 10) % 360
-        self.facing = Vector.from_degrees(degrees)
 
-    def turn_right(self):
-        degrees, _ = self.facing.to_degrees()
-        degrees = (degrees - 10) % 360
-        self.facing = Vector.from_degrees(degrees)
+class Bullet(Entity):
+    """ A bullet. Pew Pew. """
+
+    def __init__(self, position, direction, magnitude):
+        self.orig_image = pygame.image.load('assets/bullet.png')
+        super(Bullet, self).__init__(self.orig_image, position)
+        self.motion = Vector.from_degrees(direction, magnitude)
+        self.duration = 1000
+
+    def update(self):
+        self.duration = self.duration - 50
+        if self.duration <= 0:
+            self.kill()
 
 
 def main():
