@@ -94,12 +94,14 @@ class World(object):
 
         if event.key == K_SPACE:
             self.pew.play()
-            vector_sum = self.player.facing + self.player.motion
+            vector_sum = Vector(0,0) - ((self.player.facing) * (10 + self.player.motion.magnatude()))
+
+            origin = Vector(*self.player.rect.center) - self.player.facing * 2
             direction, magnitude = vector_sum.to_degrees()
 
-            self.sprites.add(Bullet(self.player.rect.center,
+            self.sprites.add(Bullet(origin.to_position(),
                                     direction,
-                                    magnitude + 10))
+                                    magnitude))
 
 
 class Vector(object):
