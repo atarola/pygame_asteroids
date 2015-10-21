@@ -93,12 +93,10 @@ class World(object):
             self.player.turn_right = False
 
         if event.key == K_SPACE:
-            vector_sum = self.player.facing + self.player.motion
+            vector_sum = (Vector(0, 0) - self.player.facing) * 10
             direction, magnitude = vector_sum.to_degrees()
-
-            self.sprites.add(Bullet(self.player.rect.center,
-                                    direction,
-                                    magnitude + 10))
+            bullet = Bullet(self.player.rect.center, direction, magnitude)
+            self.sprites.add(bullet)
 
 
 class Vector(object):
