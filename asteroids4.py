@@ -199,7 +199,7 @@ class Player(Entity):
             degrees = (degrees + 10) % 360
 
         if self.turn_right:
-            degrees = (degrees + 10) % 360
+            degrees = (degrees - 10) % 360
 
         self.facing = Vector.from_degrees(degrees)
 
