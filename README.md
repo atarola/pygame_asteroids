@@ -19,6 +19,14 @@ Download the package from: http://www.pygame.org/download.shtml for the version 
 
 Fetch from your package manager
 
+#### Fedora
+
+    sudo dnf install pygame
+
+#### Ubuntu
+
+    sudo apt-get install python-pygame
+
 ### OSX
 
 First, install Homebrew and XQuartz:
@@ -44,11 +52,13 @@ To verify your install, run:
 
 If there is no output, you're good to go.
 
+
+
 ## Step 1: Window and main loop.
 
 ### Pygame Init
 
-When we first want to run pygame, we need to let SDL setup it's environment.  
+When we first want to run pygame, we need to let pygame setup it's environment.  
 This must be done before we do anything else with pygame.
 
     pygame.init()
