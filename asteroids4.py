@@ -94,7 +94,7 @@ class World(object):
 
         if event.key == K_SPACE:
             self.pew.play()
-            vector_sum = Vector(0,0) - ((self.player.facing) * (10 + self.player.motion.magnatude()))
+            vector_sum = Vector(0,0) - ((self.player.facing) * (10 + self.player.motion.magnitude()))
 
             origin = Vector(*self.player.rect.center) - self.player.facing * 2
             direction, magnitude = vector_sum.to_degrees()
@@ -110,13 +110,13 @@ class Vector(object):
         self.x = x
         self.y = y
 
-    def magnatude(self):
-        """ return the magnatude (aka: distance) this vector represents """
+    def magnitude(self):
+        """ return the magnitude (aka: distance) this vector represents """
         return math.sqrt(self.x * self.x + self.y * self.y)
 
     def normalize(self):
         """ return a unit vector """
-        return self / self.magnatude()
+        return self / self.magnitude()
 
     def __add__(self, other):
         x = self.x + other.x
@@ -146,23 +146,23 @@ class Vector(object):
 
     def to_radians(self):
         radians = math.atan2(self.x, self.y)
-        return (radians, self.magnatude())
+        return (radians, self.magnitude())
 
     def to_degrees(self):
-        radians, magnatude = self.to_radians()
-        return (math.degrees(radians), magnatude)
+        radians, magnitude = self.to_radians()
+        return (math.degrees(radians), magnitude)
 
     @classmethod
     def from_position(self, position):
         return Vector(position[0], position[1])
 
     @classmethod
-    def from_radians(self, radians, magnatude=1):
-        return Vector(math.sin(radians), math.cos(radians)) * magnatude
+    def from_radians(self, radians, magnitude=1):
+        return Vector(math.sin(radians), math.cos(radians)) * magnitude
 
     @classmethod
-    def from_degrees(self, degrees, magnatude=1):
-        return Vector.from_radians(math.radians(degrees), magnatude)
+    def from_degrees(self, degrees, magnitude=1):
+        return Vector.from_radians(math.radians(degrees), magnitude)
 
 
 class Entity(pygame.sprite.Sprite):
